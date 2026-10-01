@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools==84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "localgate"
+version = "0.1.0"
+description = "Local and cloud LLM routing with a browser extension and local daemon."
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.141.1",
+    "uvicorn>=0.52.4",
+    "pydantic>=2.13.5",
+    "pydantic-settings>=2.15.0",
+    "httpx>=0.28.1",
+    "numpy>=2.5.3",
+    "fastembed>=0.8.0",
+]
+
+[project.optional-dependencies]
+energy = [
+    "codecarbon>=3.3.0",
+    "ecologits[openai,anthropic,google-genai]>=0.11.1",
+]
+
+[project.scripts]
+localgate-daemon = "localgate_daemon.__main__:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.6",
+]
+
+[tool.setuptools]
+package-dir = {localgate_daemon = "daemon/localgate_daemon"}
+
+[tool.setuptools.packages.find]
+where = ["daemon"]
+namespaces = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

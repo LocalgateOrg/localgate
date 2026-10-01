@@ -1,0 +1,229 @@
+/* ChatGPT provider — only what is ours.
+
+   A local exchange is rendered as two real turns carrying the host page's own classes, so
+   typography, code blocks, tables, the user bubble, the action row and both themes all come
+   from its stylesheet. What remains here is the "Local" badge, the streaming cursor, the
+   thinking indicator and the HITL approval prompt — the parts that have no native
+   counterpart to inherit. Themes follow the host page's `.dark` on <html>.               */
+
+/* ── Landing screen, while a local-only conversation stands in for a thread ──
+
+   The host page renders the same two elements for its landing screen and a thread, and
+   swaps their classes when the thread stops being empty:
+
+                                  landing                      thread
+     .composer-parent
+       > :first-child          shrink, justify-end          grow
+                               sm:min-h-[42svh − header]    (no min-height)
+       > #thread-bottom-       min-h-0 sm:grow              basis-auto
+         container
+
+   The rules below reproduce that swap and let the host page's own layout do the rest.
+   Keyed on :has() rather than a class set from JS, because React re-renders marked nodes
+   back; the landing state is React state, not the pathname.                            */
+
+.composer-parent:has([data-localgate-list]) > :first-child {
+  flex-grow: 1;
+  justify-content: normal;
+  min-height: 0;
+}
+
+.composer-parent:has([data-localgate-list]) > #thread-bottom-container {
+  flex-grow: 0;
+  min-height: auto;
+}
+
+/* What the empty state renders into those two elements: the greeting above the composer,
+   and the starter suggestions that hang below it on `top-full`, inside the composer's own
+   subtree rather than the thread column. */
+.composer-parent:has([data-localgate-list]) [data-splash-headline-option],
+.composer-parent:has([data-localgate-list]) #thread-bottom .absolute.top-full {
+  display: none;
+}
+
+/* ── "Local" badge ───────────────────────────────────────────────── */
+
+.localgate-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-tertiary, #8e8ea0);
+  margin-bottom: 2px;
+}
+
+.localgate-label::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* The same marker in the sidebar, where there is no room for the word. */
+.localgate-row-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* ── Streaming cursor ────────────────────────────────────────────── */
+
+.localgate-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: currentColor;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  animation: localgate-blink 0.6s step-end infinite;
+}
+
+@keyframes localgate-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ── Thinking state (pre-first-token) ────────────────────────────── */
+
+.localgate-thinking {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 4px;
+  font-size: 14px;
+  color: var(--text-tertiary, #8e8ea0);
+}
+
+.localgate-thinking-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: localgate-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes localgate-pulse {
+  0%, 80%, 100% { opacity: 0.25; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+/* ── Fallback action row ─────────────────────────────────────────── */
+
+/* Only reached in a conversation that has never gone to the cloud, where there is no native
+   row to clone. Dimensions match a live native action button — 32x32, 8px radius,
+   transparent, 20px icon — so the cloned and fallback cases look alike. */
+
+.localgate-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: -4px;
+  margin-left: -10px;
+  padding: 4px;
+}
+
+.localgate-action-btn {
+  appearance: none;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  padding: 0;
+  cursor: pointer;
+  color: rgb(93, 93, 93);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  /* No transition: the native button has none — its perceived slowness is the row's own
+     fade-in, and giving ours a hover transition reads as a different control. */
+}
+
+.localgate-action-btn:hover { background: rgba(0, 0, 0, 0.06); }
+.dark .localgate-action-btn:hover { background: rgba(255, 255, 255, 0.06); }
+
+.localgate-action-btn svg { width: 20px; height: 20px; }
+.localgate-action-btn .localgate-check { display: none; }
+.localgate-action-btn.copied .localgate-copy { display: none; }
+.localgate-action-btn.copied .localgate-check { display: block; color: #10a37f; }
+
+/* ── Inline HITL approval ────────────────────────────────────────── */
+
+.localgate-approval-body {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary, #6e6e80);
+}
+
+.localgate-approval-meta {
+  margin-top: 6px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary, #8e8ea0);
+}
+
+.localgate-approval-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.localgate-btn {
+  appearance: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.localgate-btn--ghost {
+  background: transparent;
+  color: var(--text-secondary, #6e6e80);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.localgate-btn--ghost:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.localgate-btn--solid {
+  background: #0d0d0d;
+  color: #fff;
+  border: 1px solid #0d0d0d;
+}
+
+.localgate-btn--solid:hover { background: #000; }
+
+.localgate-btn:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.dark .localgate-btn--ghost       { border-color: rgba(255, 255, 255, 0.15); }
+.dark .localgate-btn--ghost:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+.dark .localgate-btn--solid       { background: #f4f4f4; color: #0a0a0a; border-color: #f4f4f4; }
+.dark .localgate-btn--solid:hover { background: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  .localgate-btn { transition: none; }
+  .localgate-cursor { animation: none; opacity: 0.7; }
+  .localgate-thinking-dot { animation: none; opacity: 0.5; }
+}
+
+/* ── The composer's own control, while a local answer is generating ──────── */
+
+/* Hidden rather than removed: it is the host page's element and it goes back untouched. */
+[data-localgate-concealed] {
+  display: none !important;
+}

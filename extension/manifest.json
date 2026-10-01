@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "LocalGate",
+  "version": "0.1.0",
+  "description": "Transparent local/cloud routing research prototype.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "http://localhost:8400/*",
+    "http://127.0.0.1:8400/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "LocalGate"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chat.openai.com/*",
+        "https://chatgpt.com/*"
+      ],
+      "js": [
+        "lib/vendor/markdown-it.min.js",
+        "lib/bus.js",
+        "lib/registry.js",
+        "lib/daemon-client.js",
+        "lib/tooltip.js",
+        "providers/chatgpt/adapter.js",
+        "page/prompt-detector.js",
+        "page/chat-ui.js",
+        "page/transcript.js",
+        "page/history-rail.js",
+        "content.js",
+        "page/composer-gate.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["providers/chatgpt/styles.css"],
+      "matches": ["https://chat.openai.com/*", "https://chatgpt.com/*"],
+      "use_dynamic_url": true
+    }
+  ]
+}
