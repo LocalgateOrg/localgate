@@ -7,15 +7,10 @@ extension and daemon on your computer route prompts either to Ollama or onward t
 
 ## Demo
 
-<a href="./assets/localgate-demo.mp4">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./assets/localgate-dark.png">
-    <img src="./assets/localgate-light.png" alt="LocalGate popup and routing controls beside a locally generated response in a controlled sample chat page">
-  </picture>
-</a>
+[![LocalGate demonstration: select Review, approve a local answer, watch it stream, and switch routing modes.](./assets/localgate-demo.gif)](./assets/localgate-demo.mp4)
 
 LocalGate UI demonstration with sample responses in a controlled environment. Model output and
-displayed timings are illustrative, not benchmark measurements. [Watch the demo video.](./assets/localgate-demo.mp4)
+displayed timings are illustrative, not benchmark measurements. [Watch the sharper MP4](./assets/localgate-demo.mp4) · [Light screenshot](./assets/localgate-light.png) · [Dark screenshot](./assets/localgate-dark.png)
 
 ## Get started
 
