@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "localgate"
 version = "0.1.0"
 description = "Local and cloud LLM routing with a browser extension and local daemon."
+readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.141.1",
